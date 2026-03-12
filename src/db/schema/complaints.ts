@@ -1,0 +1,40 @@
+import {
+  pgTable,
+  uuid,
+  varchar,
+  text,
+  decimal,
+  boolean,
+  timestamp,
+} from "drizzle-orm/pg-core";
+
+export const complaints = pgTable("complaints", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  ticketId: varchar("ticket_id", { length: 30 }).notNull().unique(),
+  userName: varchar("user_name", { length: 100 }),
+  userEmail: varchar("user_email", { length: 100 }),
+  userPhone: varchar("user_phone", { length: 20 }),
+  userBankId: varchar("user_bank_id", { length: 50 }).notNull(),
+  complaintText: text("complaint_text"),
+  complaintSummary: text("complaint_summary"),
+  complaintCategory: varchar("complaint_category", { length: 50 }),
+  sourceChannel: varchar("source_channel", { length: 20 }),
+  languageDetected: varchar("language_detected", { length: 50 }),
+  signConfidencePct: decimal("sign_confidence_pct", { precision: 5, scale: 2 }),
+  status: varchar("status", { length: 20 }).default("open"),
+  assignedTo: varchar("assigned_to", { length: 10 }).default("m1"),
+  resolutionNote: text("resolution_note"),
+  resolvedBy: varchar("resolved_by", { length: 10 }),
+  resolvedAt: timestamp("resolved_at"),
+  escalatedToM2At: timestamp("escalated_to_m2_at"),
+  escalatedToM3At: timestamp("escalated_to_m3_at"),
+  emailSent: boolean("email_sent").default(false),
+  emailSentAt: timestamp("email_sent_at"),
+  callSent: boolean("call_sent").default(false),
+  callSentAt: timestamp("call_sent_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export type Complaint = typeof complaints.$inferSelect;
+export type NewComplaint = typeof complaints.$inferInsert;
