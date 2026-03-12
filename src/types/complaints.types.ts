@@ -28,5 +28,7 @@ export interface IntakeComplaintBody {
   complaintCategory: string; 
   sourceChannel: ComplaintSourceChannel;
   languageDetected: string;
-  signConfidencePct?: number;
+  audioUrl?: string;
+  videoUrl?: string;
+  rawChatText?: string;
 }

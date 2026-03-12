@@ -54,8 +54,12 @@ export async function intakeComplaint(req: Request, res: Response) {
     complaintCategory: body.complaintCategory,
     sourceChannel: body.sourceChannel,
     languageDetected: body.languageDetected,
-    signConfidencePct:
-      body.signConfidencePct != null ? String(body.signConfidencePct) : null,
+    // TODO: audio URL from voice channel webhook (URL string)
+    audioUrl: body.audioUrl ?? null,
+    // TODO: video URL from sign channel webhook (URL string, not confirmed yet)
+    videoUrl: body.videoUrl ?? null,
+    // TODO: raw human-typed chat message from chat channel webhook
+    rawChatText: body.rawChatText ?? null,
     status: COMPLAINT_STATUSES[0],
     assignedTo: ESCALATION_LEVELS[0],
   };

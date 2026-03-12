@@ -13,5 +13,6 @@ export const VOICE_LANGUAGES = [
   "tamil",
   "telugu",
   "kannada",
-  "malayalam",
+  "gujarati",
+  "bengali",
 ] as const;
