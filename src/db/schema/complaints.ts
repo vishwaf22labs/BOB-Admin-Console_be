@@ -6,6 +6,7 @@ import {
   text,
   boolean,
   timestamp,
+  jsonb,
 } from "drizzle-orm/pg-core";
 
 export const complaints = pgTable("complaints", {
@@ -23,6 +24,7 @@ export const complaints = pgTable("complaints", {
   audioUrl: varchar("audio_url", { length: 500 }),
   videoUrl: varchar("video_url", { length: 500 }),
   rawChatText: text("raw_chat_text"),
+  transcript: jsonb("transcript"),
   languageDetected: varchar("language_detected", { length: 50 }),
   status: varchar("status", { length: 20 }).default("open"),
   assignedTo: varchar("assigned_to", { length: 10 }).default("m1"),

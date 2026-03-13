@@ -3,12 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 
 import { env } from "./config/env";
-import {
-  authRoutes,
-  bankSettingsRoutes,
-  complaintsRoutes,
-  intakeRoutes,
-} from "./routes";
+import { authRoutes, bankSettingsRoutes, complaintsRoutes } from "./routes";
 import { startEscalationJob } from "./jobs/escalation.job";
 
 const app = express();
@@ -29,7 +24,6 @@ app.get("/health", (_req, res) => {
 app.use("/api", authRoutes);
 app.use("/api", bankSettingsRoutes);
 app.use("/api", complaintsRoutes);
-app.use("/api", intakeRoutes);
 
 app.listen(env.port, () => {
   console.log(`Server listening on port ${env.port}`);

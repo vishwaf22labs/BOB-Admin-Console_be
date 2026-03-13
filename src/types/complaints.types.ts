@@ -4,6 +4,12 @@ export type ComplaintSourceChannel = "voice" | "chat" | "sign";
 
 export type ComplaintAssignee = "m1" | "m2" | "m3";
 
+export interface TranscriptMessage {
+  role: "agent" | "user";
+  content: string;
+  timestamp?: string;
+}
+
 export interface ListComplaintsQuery {
   status?: ComplaintStatus;
   sourceChannel?: ComplaintSourceChannel;
@@ -16,19 +22,4 @@ export interface ListComplaintsQuery {
 
 export interface ResolveComplaintBody {
   resolutionNote: string;
-}
-
-export interface IntakeComplaintBody {
-  userName: string;
-  userEmail: string;
-  userPhone: string;
-  userBankId: string;
-  complaintText: string;
-  complaintSummary: string;
-  complaintCategory: string; 
-  sourceChannel: ComplaintSourceChannel;
-  languageDetected: string;
-  audioUrl?: string;
-  videoUrl?: string;
-  rawChatText?: string;
 }
