@@ -1,5 +1,6 @@
 import {
   pgTable,
+  integer,
   uuid,
   varchar,
   text,
@@ -8,7 +9,8 @@ import {
 } from "drizzle-orm/pg-core";
 
 export const complaints = pgTable("complaints", {
-  id: uuid("id").primaryKey().defaultRandom(),
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  uuid: uuid("uuid").notNull().unique().defaultRandom(),
   ticketId: varchar("ticket_id", { length: 30 }).notNull().unique(),
   userName: varchar("user_name", { length: 100 }),
   userEmail: varchar("user_email", { length: 100 }),
@@ -39,3 +41,4 @@ export const complaints = pgTable("complaints", {
 
 export type Complaint = typeof complaints.$inferSelect;
 export type NewComplaint = typeof complaints.$inferInsert;
+export type ComplaintWithoutId = Omit<Complaint, "id">;

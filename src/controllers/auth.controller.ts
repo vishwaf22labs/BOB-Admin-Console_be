@@ -27,7 +27,8 @@ export async function login(req: Request, res: Response) {
   }
 
   const payload = buildJwtPayload({
-    id: user.id,
+    uuid: user.uuid,
+    name: user.name,
     email: user.email,
     bankId: user.bankId ?? null,
     role: user.role,

@@ -42,9 +42,9 @@ export async function listComplaints(req: Request, res: Response) {
 
 export async function getComplaintById(req: Request, res: Response) {
   const user = getAuthUser(req);
-  const id = req.params.id as string;
+  const uuid = req.params.id as string;
 
-  const complaint = await findComplaintById(id);
+  const complaint = await findComplaintById(uuid);
 
   if (!complaint) {
     return res.status(404).json({ message: "Complaint not found" });
@@ -59,14 +59,14 @@ export async function getComplaintById(req: Request, res: Response) {
 
 export async function resolveComplaint(req: Request, res: Response) {
   const user = getAuthUser(req);
-  const id = req.params.id as string;
+  const uuid = req.params.id as string;
   const body = req.body as ResolveComplaintBody;
 
   if (!body.resolutionNote) {
     return res.status(400).json({ message: "resolutionNote is required" });
   }
 
-  const complaint = await findComplaintById(id);
+  const complaint = await findComplaintById(uuid);
 
   if (!complaint) {
     return res.status(404).json({ message: "Complaint not found" });

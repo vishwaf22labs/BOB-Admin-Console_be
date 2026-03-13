@@ -1,7 +1,8 @@
 export type Role = "super_admin" | "m1" | "m2" | "m3";
 
 export interface JwtPayload {
-  id: string;
+  uuid: string;
+  name: string;
   email: string;
   bankId: string | null;
   role: Role;
@@ -15,7 +16,7 @@ export interface LoginRequestBody {
 }
 
 export interface LoginResponseUser {
-  id: string;
+  uuid: string;
   name: string;
   email: string;
   bankId: string | null;

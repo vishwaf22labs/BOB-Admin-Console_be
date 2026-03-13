@@ -67,10 +67,10 @@ export async function intakeComplaint(req: Request, res: Response) {
   const [inserted] = await db
     .insert(complaints)
     .values(newComplaint)
-    .returning({ id: complaints.id, ticketId: complaints.ticketId });
+    .returning({ uuid: complaints.uuid, ticketId: complaints.ticketId });
 
   return res.status(201).json({
     ticketId: inserted.ticketId,
-    complaintId: inserted.id,
+    complaintId: inserted.uuid,
   });
 }

@@ -20,13 +20,15 @@ export async function verifyPassword(
 }
 
 export function buildJwtPayload(user: {
-  id: string;
+  uuid: string;
+  name: string;
   email: string;
   bankId: string | null;
   role: string;
 }): JwtPayload {
   return {
-    id: user.id,
+    uuid: user.uuid,
+    name: user.name,
     email: user.email,
     bankId: user.bankId,
     role: user.role as JwtPayload["role"],
@@ -43,7 +45,7 @@ export function signToken(payload: JwtPayload): string {
 
 export function toLoginResponseUser(user: any): LoginResponseUser {
   return {
-    id: user.id,
+    uuid: user.uuid,
     name: user.name,
     email: user.email,
     bankId: user.bankId ?? null,
@@ -53,7 +55,8 @@ export function toLoginResponseUser(user: any): LoginResponseUser {
 
 export function toAuthUserFromPayload(payload: JwtPayload): AuthUser {
   return {
-    id: payload.id,
+    uuid: payload.uuid,
+    name: payload.name,
     email: payload.email,
     bankId: payload.bankId,
     role: payload.role,

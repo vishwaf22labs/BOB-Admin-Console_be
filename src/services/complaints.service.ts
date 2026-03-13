@@ -1,4 +1,4 @@
-import { and, desc, eq, ilike, or, count } from "drizzle-orm";
+import { and, desc, eq, ilike, or, count, getTableColumns } from "drizzle-orm";
 import { db } from "../db/client";
 import { complaints } from "../db/schema";
 import {
@@ -12,13 +12,13 @@ import {
   ResolveComplaintBody,
 } from "../types/complaints.types";
 import { sendResolutionEmail } from "./email.service";
-import type { Complaint } from "../db/schema";
+import type { Complaint, ComplaintWithoutId } from "../db/schema";
 
 export async function listComplaintsForUser(
   user: AuthUser,
   query: ListComplaintsQuery,
 ): Promise<{
-  complaints: Complaint[];
+  complaints: ComplaintWithoutId[];
   total: number;
   page: number;
   limit: number;
@@ -79,8 +79,10 @@ export async function listComplaintsForUser(
 
   const total = Number(countResult?.count ?? 0);
 
+  const { id: _id, ...complaintColumns } = getTableColumns(complaints);
+
   const rows = await db
-    .select()
+    .select(complaintColumns)
     .from(complaints)
     .where(whereClause)
     .orderBy(desc(complaints.createdAt))
@@ -96,20 +98,24 @@ export async function listComplaintsForUser(
   };
 }
 
-export async function findComplaintById(id: string): Promise<Complaint | null> {
+export async function findComplaintById(
+  uuid: string,
+): Promise<ComplaintWithoutId | null> {
+  const { id: _id, ...complaintColumns } = getTableColumns(complaints);
+
   const [complaint] = await db
-    .select()
+    .select(complaintColumns)
     .from(complaints)
-    .where(eq(complaints.id, id));
+    .where(eq(complaints.uuid, uuid));
 
   return complaint ?? null;
 }
 
 export async function resolveComplaintForUser(
   user: AuthUser,
-  complaint: Complaint,
+  complaint: ComplaintWithoutId,
   body: ResolveComplaintBody,
-): Promise<Complaint> {
+): Promise<ComplaintWithoutId> {
   const now = new Date();
 
   await db
@@ -121,7 +127,7 @@ export async function resolveComplaintForUser(
       resolvedAt: now,
       updatedAt: now,
     })
-    .where(eq(complaints.id, complaint.id));
+    .where(eq(complaints.uuid, complaint.uuid));
 
   const channel = complaint.sourceChannel;
 
@@ -133,7 +139,7 @@ export async function resolveComplaintForUser(
         callSentAt: now,
         updatedAt: now,
       })
-      .where(eq(complaints.id, complaint.id));
+      .where(eq(complaints.uuid, complaint.uuid));
   }
 
   if (
@@ -153,16 +159,18 @@ export async function resolveComplaintForUser(
           emailSentAt: now,
           updatedAt: now,
         })
-        .where(eq(complaints.id, complaint.id));
+        .where(eq(complaints.uuid, complaint.uuid));
     } catch (err) {
       console.error("[email] Resolution email failed", err);
     }
   }
 
+  const { id: _id, ...complaintColumns } = getTableColumns(complaints);
+
   const [updated] = await db
-    .select()
+    .select(complaintColumns)
     .from(complaints)
-    .where(eq(complaints.id, complaint.id));
+    .where(eq(complaints.uuid, complaint.uuid));
 
   return updated!;
 }
