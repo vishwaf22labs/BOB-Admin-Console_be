@@ -118,29 +118,22 @@ export async function resolveComplaintForUser(
 ): Promise<ComplaintWithoutId> {
   const now = new Date();
 
-  await db
-    .update(complaints)
-    .set({
-      status: COMPLAINT_STATUSES[1],
-      resolutionNote: body.resolutionNote,
-      resolvedBy: user.role,
-      resolvedAt: now,
-      updatedAt: now,
-    })
-    .where(eq(complaints.uuid, complaint.uuid));
-
   const channel = complaint.sourceChannel;
 
+  const updateData: Partial<typeof complaints.$inferInsert> = {
+    status: COMPLAINT_STATUSES[1],
+    resolutionNote: body.resolutionNote,
+    resolvedBy: user.role,
+    resolvedAt: now,
+    updatedAt: now,
+  };
+
   if (channel === SOURCE_CHANNELS[0]) {
-    await db
-      .update(complaints)
-      .set({
-        callSent: true,
-        callSentAt: now,
-        updatedAt: now,
-      })
-      .where(eq(complaints.uuid, complaint.uuid));
+    updateData.callSent = true;
+    updateData.callSentAt = now;
   }
+
+  let emailShouldBeMarkedSent = false;
 
   if (
     (channel === EMAIL_CHANNELS[0] || channel === EMAIL_CHANNELS[1]) &&
@@ -152,25 +145,24 @@ export async function resolveComplaintForUser(
         complaint.userName ?? "Customer",
         complaint.ticketId,
       );
-      await db
-        .update(complaints)
-        .set({
-          emailSent: true,
-          emailSentAt: now,
-          updatedAt: now,
-        })
-        .where(eq(complaints.uuid, complaint.uuid));
+      emailShouldBeMarkedSent = true;
     } catch (err) {
       console.error("[email] Resolution email failed", err);
     }
   }
 
+  if (emailShouldBeMarkedSent) {
+    updateData.emailSent = true;
+    updateData.emailSentAt = now;
+  }
+
   const { id: _id, ...complaintColumns } = getTableColumns(complaints);
 
   const [updated] = await db
-    .select(complaintColumns)
-    .from(complaints)
-    .where(eq(complaints.uuid, complaint.uuid));
+    .update(complaints)
+    .set(updateData)
+    .where(eq(complaints.uuid, complaint.uuid))
+    .returning(complaintColumns);
 
   return updated!;
 }

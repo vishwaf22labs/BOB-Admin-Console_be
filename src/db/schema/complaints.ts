@@ -12,6 +12,7 @@ import {
 export const complaints = pgTable("complaints", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   uuid: uuid("uuid").notNull().unique().defaultRandom(),
+  customerUuid: uuid("customer_uuid"),
   ticketId: varchar("ticket_id", { length: 30 }).notNull().unique(),
   userName: varchar("user_name", { length: 100 }),
   userEmail: varchar("user_email", { length: 100 }),
