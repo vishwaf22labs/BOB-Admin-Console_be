@@ -54,13 +54,13 @@ export async function listComplaintsForUser(
         ilike(complaints.userEmail, `%${search}%`),
         ilike(complaints.userPhone, `%${search}%`),
         ilike(complaints.ticketId, `%${search}%`),
-        ilike(complaints.complaintText, `%${search}%`),
+
         ilike(complaints.complaintSummary, `%${search}%`),
         ilike(complaints.complaintCategory, `%${search}%`),
         ilike(complaints.userBankId, `%${search}%`),
         ilike(complaints.sourceChannel, `%${search}%`),
         ilike(complaints.assignedTo, `%${search}%`),
-        ilike(complaints.languageDetected, `%${search}%`),
+        ilike(complaints.language, `%${search}%`),
         ilike(complaints.status, `%${search}%`),
       )!,
     );
