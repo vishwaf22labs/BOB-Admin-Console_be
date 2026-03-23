@@ -24,6 +24,7 @@ export async function createCustomer(
     }
 
     const validData = parsed.data;
+    const normalizedEmail = validData.email?.trim();
 
     const { id: _id, ...customerColumns } = getTableColumns(customers);
 
@@ -31,7 +32,7 @@ export async function createCustomer(
       .insert(customers)
       .values({
         name: validData.name.trim(),
-        email: validData.email.trim(),
+        email: normalizedEmail ? normalizedEmail : null,
         phone: validData.phone.trim(),
         channelMode: validData.channelMode,
       })
